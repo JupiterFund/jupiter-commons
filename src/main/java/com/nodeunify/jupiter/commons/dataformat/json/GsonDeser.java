@@ -6,11 +6,11 @@ import com.google.protobuf.GeneratedMessageV3;
 import com.nodeunify.jupiter.datastream.v1.Order;
 import com.nodeunify.jupiter.datastream.v1.Quote;
 
-public class ProtobufDeser {
+public class GsonDeser {
 
     private Gson gson;
 
-    public ProtobufDeser() {
+    public GsonDeser() {
         // @formatter:off
         gson = new GsonBuilder()
             .registerTypeAdapter(Quote.class, new QuoteAdapter())
