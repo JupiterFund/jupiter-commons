@@ -7,11 +7,11 @@ import com.nodeunify.jupiter.commons.serializer.QuoteAdapter;
 import com.nodeunify.jupiter.datastream.v1.Order;
 import com.nodeunify.jupiter.datastream.v1.Quote;
 
-public class DataSerializer {
+public class ProtobufDeser {
 
     private Gson gson;
 
-    public DataSerializer() {
+    public ProtobufDeser() {
         // @formatter:off
         gson = new GsonBuilder()
             .registerTypeAdapter(Quote.class, new QuoteAdapter())
@@ -20,7 +20,11 @@ public class DataSerializer {
         // @formatter:on
     }
 
-    public String toJson(GeneratedMessageV3 message) {
-        return gson.toJson(message);
+    public String toJson(GeneratedMessageV3 object) {
+        return gson.toJson(object);
+    }
+
+    public <T extends GeneratedMessageV3> T fromJson(String json, Class<T> clazz) {
+        return gson.fromJson(json, clazz);
     }
 }
