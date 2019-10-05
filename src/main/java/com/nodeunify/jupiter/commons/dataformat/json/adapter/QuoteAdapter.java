@@ -1,10 +1,11 @@
-package com.nodeunify.jupiter.commons.dataformat.json;
+package com.nodeunify.jupiter.commons.dataformat.json.adapter;
 
 import java.lang.reflect.Type;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
@@ -21,8 +22,8 @@ public class QuoteAdapter implements JsonSerializer<Quote>, JsonDeserializer<Quo
 
     @Override
     public JsonElement serialize(Quote src, Type typeOfSrc, JsonSerializationContext context) {
-        // TODO Auto-generated method stub
-        return null;
+        JsonObject jsonObject = new JsonObject();
+        return jsonObject;
     }
 
 }

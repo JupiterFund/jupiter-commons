@@ -1,4 +1,4 @@
-package com.nodeunify.jupiter.commons.dataformat.json;
+package com.nodeunify.jupiter.commons.dataformat.json.adapter;
 
 import java.lang.reflect.Type;
 
