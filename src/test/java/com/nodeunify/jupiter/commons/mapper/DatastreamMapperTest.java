@@ -2,6 +2,9 @@ package com.nodeunify.jupiter.commons.mapper;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import cn.com.wind.td.tdf.TDF_MARKET_DATA;
+
 import static org.junit.Assert.*;
 
 import com.gta.qts.c2j.adaptee.structure.BuySellLevelInfo3;
@@ -10,6 +13,7 @@ import com.nodeunify.jupiter.datastream.v1.Quote;
 
 public class DatastreamMapperTest {
     private static SSEL2_Quotation quotation;
+    private static TDF_MARKET_DATA marketData;
 
     @Before
     public void before() {
@@ -29,6 +33,11 @@ public class DatastreamMapperTest {
         buyLevel.Volume = 343434;
         buyLevel.Price = 15.22;
         quotation.BuyLevel[0] = buyLevel;
+
+        marketData = new TDF_MARKET_DATA();
+        marketData.setWindCode("100200.sz");
+        marketData.setCode("100200");
+        marketData.setOpen(12330);
     }
 
     @Test
@@ -44,5 +53,13 @@ public class DatastreamMapperTest {
         assertNotNull(quote.getBidOrderQtyList());
         assertNotNull(quote.getBidOrderQtyList().get(0));
         assertEquals(343434, quote.getBidOrderQtyList().get(0).longValue());
+    }
+
+    @Test
+    public void testTDF_MARKET_DATAToQuote() {
+        Quote quote = DatastreamMapper.MAPPER.map(marketData);
+        assertEquals(Quote.Market.SHENZHEN, quote.getMarket());
+        assertEquals(1, quote.getMarketValue());
+        assertEquals(12330, quote.getOpenPx());
     }
 }

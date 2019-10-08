@@ -36,6 +36,11 @@ public class GTAUtil {
     @Retention(RetentionPolicy.SOURCE)
     public @interface ExtractTimestamp { }
 
+    @Qualifier
+    @Target(ElementType.METHOD)
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface IdentifyMarket { }
+
     // @formatter:on
 
     @Round
@@ -62,5 +67,20 @@ public class GTAUtil {
     public long extractTimestamp(int time) {
         // TODO: check format of time field from GTA
         return time % 1000000000;
+    }
+
+    @IdentifyMarket
+    public int identifyMarket(String windCode) {
+        // TODO: check whether return hard code int or Quote.Market.SHANGHAI
+        if (windCode.endsWith("sh")) {
+            return 0;
+        }
+        if (windCode.endsWith("sz")) {
+            return 1;
+        }
+        if (windCode.endsWith("hk")) {
+            return 2;
+        }
+        return 0;
     }
 }

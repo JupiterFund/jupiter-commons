@@ -7,6 +7,7 @@ import com.gta.qts.c2j.adaptee.structure.SZSEL2_Quotation;
 import com.nodeunify.jupiter.commons.mapper.util.GTAUtil;
 import com.nodeunify.jupiter.commons.mapper.util.GTAUtil.ByteArrayToStringAndTrim;
 import com.nodeunify.jupiter.commons.mapper.util.GTAUtil.ExtractTimestamp;
+import com.nodeunify.jupiter.commons.mapper.util.GTAUtil.IdentifyMarket;
 import com.nodeunify.jupiter.commons.mapper.util.GTAUtil.Round;
 import com.nodeunify.jupiter.commons.mapper.util.GTAUtil.RoundToInt;
 import com.nodeunify.jupiter.datastream.v1.Order;
@@ -127,6 +128,7 @@ public interface DatastreamMapper {
     }
 
     // TDF_MARKET_DATA -> Quote
+    @Mapping(source = "windCode", target = "marketValue", qualifiedBy = IdentifyMarket.class)
     @Mapping(source = "code", target = "code")
     @Mapping(source = "time", target = "timestamp")
     @Mapping(source = "preClose", target = "preClosePx")
