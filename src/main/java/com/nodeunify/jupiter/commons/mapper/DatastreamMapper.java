@@ -33,7 +33,7 @@ public interface DatastreamMapper {
     DatastreamMapper MAPPER = Mappers.getMapper(DatastreamMapper.class);
 
     // SSEL2_Quotation -> Quote
-    @Mapping(target = "market", expression = "java( com.nodeunify.jupiter.datastream.v1.Quote.Market.SHANGHAI )")
+    @Mapping(target = "market", expression = "java( com.nodeunify.jupiter.datastream.v1.MarketEnum.Market.SHANGHAI )")
     @Mapping(source = "Symbol", target = "code", qualifiedBy = ByteArrayToStringAndTrim.class)
     @Mapping(source = "Time", target = "timestamp", qualifiedBy = ExtractTimestamp.class)
     @Mapping(source = "PreClosePrice", target = "preClosePx", qualifiedBy = Round.class)
@@ -85,7 +85,7 @@ public interface DatastreamMapper {
     }
 
     // SZSEL2_Quotation -> Quote
-    @Mapping(target = "market", expression = "java( com.nodeunify.jupiter.datastream.v1.Quote.Market.SHENZHEN )")
+    @Mapping(target = "market", expression = "java( com.nodeunify.jupiter.datastream.v1.MarketEnum.Market.SHENZHEN )")
     @Mapping(source = "Symbol", target = "code", qualifiedBy = ByteArrayToStringAndTrim.class)
     @Mapping(source = "Time", target = "timestamp", qualifiedBy = ExtractTimestamp.class)
     @Mapping(source = "PreClosePrice", target = "preClosePx", qualifiedBy = Round.class)
@@ -128,7 +128,7 @@ public interface DatastreamMapper {
     }
 
     // TDF_MARKET_DATA -> Quote
-    @Mapping(source = "windCode", target = "marketValue", qualifiedBy = IdentifyMarket.class)
+    @Mapping(source = "windCode", target = "market", qualifiedBy = IdentifyMarket.class)
     @Mapping(source = "code", target = "code")
     @Mapping(source = "time", target = "timestamp")
     @Mapping(source = "preClose", target = "preClosePx")

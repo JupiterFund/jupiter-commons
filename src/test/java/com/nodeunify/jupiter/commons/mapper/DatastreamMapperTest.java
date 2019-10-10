@@ -10,6 +10,7 @@ import static org.junit.Assert.*;
 import com.gta.qts.c2j.adaptee.structure.BuySellLevelInfo3;
 import com.gta.qts.c2j.adaptee.structure.SSEL2_Quotation;
 import com.nodeunify.jupiter.datastream.v1.Quote;
+import com.nodeunify.jupiter.datastream.v1.MarketEnum.Market;
 
 public class DatastreamMapperTest {
     private static SSEL2_Quotation quotation;
@@ -44,6 +45,7 @@ public class DatastreamMapperTest {
     public void testSSEL2_QuotationToQuote() {
         Quote quote = DatastreamMapper.MAPPER.map(quotation);
         assertEquals(143025, quote.getTimestamp());
+        assertEquals(Market.SHANGHAI, quote.getMarket());
         assertEquals("600100", quote.getCode());
         assertEquals(13230, quote.getPreClosePx());
         assertEquals(14550, quote.getOpenPx());
@@ -58,7 +60,7 @@ public class DatastreamMapperTest {
     @Test
     public void testTDF_MARKET_DATAToQuote() {
         Quote quote = DatastreamMapper.MAPPER.map(marketData);
-        assertEquals(Quote.Market.SHENZHEN, quote.getMarket());
+        assertEquals(Market.SHENZHEN, quote.getMarket());
         assertEquals(1, quote.getMarketValue());
         assertEquals(12330, quote.getOpenPx());
     }

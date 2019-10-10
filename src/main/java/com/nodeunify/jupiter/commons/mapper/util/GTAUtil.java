@@ -6,6 +6,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.nodeunify.jupiter.datastream.v1.MarketEnum.Market;
+
 import org.mapstruct.Qualifier;
 
 public class GTAUtil {
@@ -70,17 +72,16 @@ public class GTAUtil {
     }
 
     @IdentifyMarket
-    public int identifyMarket(String windCode) {
-        // TODO: check whether return hard code int or Quote.Market.SHANGHAI
+    public Market identifyMarket(String windCode) {
         if (windCode.endsWith("sh")) {
-            return 0;
+            return Market.SHANGHAI;
         }
         if (windCode.endsWith("sz")) {
-            return 1;
+            return Market.SHENZHEN;
         }
         if (windCode.endsWith("hk")) {
-            return 2;
+            return Market.HONGKONG;
         }
-        return 0;
+        return Market.SHANGHAI;
     }
 }
