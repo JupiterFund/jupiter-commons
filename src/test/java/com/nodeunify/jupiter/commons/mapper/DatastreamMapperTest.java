@@ -9,7 +9,7 @@ import static org.junit.Assert.*;
 
 import com.gta.qts.c2j.adaptee.structure.BuySellLevelInfo3;
 import com.gta.qts.c2j.adaptee.structure.SSEL2_Quotation;
-import com.nodeunify.jupiter.datastream.v1.Quote;
+import com.nodeunify.jupiter.datastream.v1.StockData;
 import com.nodeunify.jupiter.datastream.v1.MarketEnum.Market;
 
 public class DatastreamMapperTest {
@@ -42,26 +42,26 @@ public class DatastreamMapperTest {
     }
 
     @Test
-    public void testSSEL2_QuotationToQuote() {
-        Quote quote = DatastreamMapper.MAPPER.map(quotation);
-        assertEquals(143025, quote.getTimestamp());
-        assertEquals(Market.SHANGHAI, quote.getMarket());
-        assertEquals("600100", quote.getCode());
-        assertEquals(13230, quote.getPreClosePx());
-        assertEquals(14550, quote.getOpenPx());
-        assertEquals(15320, quote.getClosePx());
-        assertEquals(15820, quote.getHighPx());
-        assertEquals(14230, quote.getLowPx());
-        assertNotNull(quote.getBidOrderQtyList());
-        assertNotNull(quote.getBidOrderQtyList().get(0));
-        assertEquals(343434, quote.getBidOrderQtyList().get(0).longValue());
+    public void testSSEL2_QuotationToStockData() {
+        StockData stockData = DatastreamMapper.MAPPER.map(quotation);
+        assertEquals(143025, stockData.getTimestamp());
+        assertEquals(Market.SHANGHAI, stockData.getMarket());
+        assertEquals("600100", stockData.getCode());
+        assertEquals(13230, stockData.getPreClosePx());
+        assertEquals(14550, stockData.getOpenPx());
+        assertEquals(15320, stockData.getClosePx());
+        assertEquals(15820, stockData.getHighPx());
+        assertEquals(14230, stockData.getLowPx());
+        assertNotNull(stockData.getBidQtyList());
+        assertNotNull(stockData.getBidQtyList().get(0));
+        assertEquals(343434, stockData.getBidQtyList().get(0).longValue());
     }
 
     @Test
-    public void testTDF_MARKET_DATAToQuote() {
-        Quote quote = DatastreamMapper.MAPPER.map(marketData);
-        assertEquals(Market.SHENZHEN, quote.getMarket());
-        assertEquals(1, quote.getMarketValue());
-        assertEquals(12330, quote.getOpenPx());
+    public void testTDF_MARKET_DATAToStockData() {
+        StockData stockData = DatastreamMapper.MAPPER.map(marketData);
+        assertEquals(Market.SHENZHEN, stockData.getMarket());
+        assertEquals(1, stockData.getMarketValue());
+        assertEquals(12330, stockData.getOpenPx());
     }
 }

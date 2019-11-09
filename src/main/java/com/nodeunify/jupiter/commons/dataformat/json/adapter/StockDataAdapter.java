@@ -10,21 +10,21 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import com.nodeunify.jupiter.datastream.v1.Quote;
+import com.nodeunify.jupiter.datastream.v1.StockData;
 
 // Example Adapter
 // TODO: to be deleted
-public class QuoteAdapter implements JsonSerializer<Quote>, JsonDeserializer<Quote> {
+public class StockDataAdapter implements JsonSerializer<StockData>, JsonDeserializer<StockData> {
 
     @Override
-    public Quote deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+    public StockData deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
             throws JsonParseException {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public JsonElement serialize(Quote src, Type typeOfSrc, JsonSerializationContext context) {
+    public JsonElement serialize(StockData src, Type typeOfSrc, JsonSerializationContext context) {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("code", src.getCode());
         jsonObject.addProperty("timestamp", src.getTimestamp());
@@ -65,7 +65,7 @@ public class QuoteAdapter implements JsonSerializer<Quote>, JsonDeserializer<Quo
         src.getBidPriceList().stream().forEach(price -> bidPrice.add(price));
         jsonObject.add("bidPrice", bidPrice);
         JsonArray bidOrderQty = new JsonArray();
-        src.getBidOrderQtyList().stream().forEach(orderQty -> bidOrderQty.add(orderQty));
+        src.getBidQtyList().stream().forEach(orderQty -> bidOrderQty.add(orderQty));
         jsonObject.add("bidOrderQty", bidOrderQty);
         JsonArray bidNumOrders = new JsonArray();
         src.getBidNumOrdersList().stream().forEach(numOrders -> bidNumOrders.add(numOrders));
@@ -74,7 +74,7 @@ public class QuoteAdapter implements JsonSerializer<Quote>, JsonDeserializer<Quo
         src.getOfferPriceList().stream().forEach(price -> offerPrice.add(price));
         jsonObject.add("offerPrice", offerPrice);
         JsonArray offerOrderQty = new JsonArray();
-        src.getOfferOrderQtyList().stream().forEach(orderQty -> offerOrderQty.add(orderQty));
+        src.getOfferQtyList().stream().forEach(orderQty -> offerOrderQty.add(orderQty));
         jsonObject.add("offerOrderQty", offerOrderQty);
         JsonArray offerNumOrders = new JsonArray();
         src.getOfferNumOrdersList().stream().forEach(numOrders -> offerNumOrders.add(numOrders));

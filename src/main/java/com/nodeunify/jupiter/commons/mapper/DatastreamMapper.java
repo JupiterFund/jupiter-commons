@@ -11,7 +11,7 @@ import com.nodeunify.jupiter.commons.mapper.util.GTAUtil.IdentifyMarket;
 import com.nodeunify.jupiter.commons.mapper.util.GTAUtil.Round;
 import com.nodeunify.jupiter.commons.mapper.util.GTAUtil.RoundToInt;
 import com.nodeunify.jupiter.datastream.v1.Order;
-import com.nodeunify.jupiter.datastream.v1.Quote;
+import com.nodeunify.jupiter.datastream.v1.StockData;
 
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
@@ -32,7 +32,7 @@ public interface DatastreamMapper {
 
     DatastreamMapper MAPPER = Mappers.getMapper(DatastreamMapper.class);
 
-    // SSEL2_Quotation -> Quote
+    // SSEL2_Quotation -> StockData
     @Mapping(target = "market", expression = "java( com.nodeunify.jupiter.datastream.v1.MarketEnum.Market.SHANGHAI )")
     @Mapping(source = "Symbol", target = "code", qualifiedBy = ByteArrayToStringAndTrim.class)
     @Mapping(source = "Time", target = "timestamp", qualifiedBy = ExtractTimestamp.class)
@@ -63,28 +63,28 @@ public interface DatastreamMapper {
     @Mapping(source = "WithdrawSellVolume", target = "withdrawSellAmount")
     @Mapping(source = "WithdrawSellNo", target = "withdrawSellNumber")
     @Mapping(source = "IOPV", target = "IOPV", qualifiedBy = Round.class)
-    Quote map(SSEL2_Quotation data);
+    StockData map(SSEL2_Quotation data);
 
     @AfterMapping
-    default void afterMapping(SSEL2_Quotation data, @MappingTarget Quote.Builder quote) {
+    default void afterMapping(SSEL2_Quotation data, @MappingTarget StockData.Builder stockData) {
         GTAUtil gtaUtil = new GTAUtil();
         Arrays.stream(data.BuyLevel).forEach((fieldVal) -> {
             if (fieldVal != null) {
-                quote.addBidPrice(gtaUtil.round(fieldVal.Price));
-                quote.addBidOrderQty(fieldVal.Volume);
-                quote.addBidNumOrders(fieldVal.TotalOrderNo);
+                stockData.addBidPrice(gtaUtil.round(fieldVal.Price));
+                stockData.addBidQty(fieldVal.Volume);
+                stockData.addBidNumOrders(fieldVal.TotalOrderNo);
             }
         });
         Arrays.stream(data.SellLevel).forEach((fieldVal) -> {
             if (fieldVal != null) {
-                quote.addOfferPrice(gtaUtil.round(fieldVal.Price));
-                quote.addOfferOrderQty(fieldVal.Volume);
-                quote.addOfferNumOrders(fieldVal.TotalOrderNo);
+                stockData.addOfferPrice(gtaUtil.round(fieldVal.Price));
+                stockData.addOfferQty(fieldVal.Volume);
+                stockData.addOfferNumOrders(fieldVal.TotalOrderNo);
             }
         });
     }
 
-    // SZSEL2_Quotation -> Quote
+    // SZSEL2_Quotation -> StockData
     @Mapping(target = "market", expression = "java( com.nodeunify.jupiter.datastream.v1.MarketEnum.Market.SHENZHEN )")
     @Mapping(source = "Symbol", target = "code", qualifiedBy = ByteArrayToStringAndTrim.class)
     @Mapping(source = "Time", target = "timestamp", qualifiedBy = ExtractTimestamp.class)
@@ -106,28 +106,28 @@ public interface DatastreamMapper {
     @Mapping(source = "PriceDownLimit", target = "priceDownLimit", qualifiedBy = Round.class)
     @Mapping(source = "PERatio1", target = "peRatio1", qualifiedBy = RoundToInt.class)
     @Mapping(source = "PERatio2", target = "peRatio2", qualifiedBy = RoundToInt.class)
-    Quote map(SZSEL2_Quotation data);
+    StockData map(SZSEL2_Quotation data);
 
     @AfterMapping
-    default void afterMapping(SZSEL2_Quotation data, @MappingTarget Quote.Builder quote) {
+    default void afterMapping(SZSEL2_Quotation data, @MappingTarget StockData.Builder stockData) {
         GTAUtil gtaUtil = new GTAUtil();
         Arrays.stream(data.BuyLevel).forEach((fieldVal) -> {
             if (fieldVal != null) {
-                quote.addBidPrice(gtaUtil.round(fieldVal.Price));
-                quote.addBidOrderQty(gtaUtil.round(fieldVal.Volume));
-                quote.addBidNumOrders(gtaUtil.mathToIntExact(fieldVal.TotalOrderNo));
+                stockData.addBidPrice(gtaUtil.round(fieldVal.Price));
+                stockData.addBidQty(gtaUtil.round(fieldVal.Volume));
+                stockData.addBidNumOrders(gtaUtil.mathToIntExact(fieldVal.TotalOrderNo));
             }
         });
         Arrays.stream(data.SellLevel).forEach((fieldVal) -> {
             if (fieldVal != null) {
-                quote.addOfferPrice(gtaUtil.round(fieldVal.Price));
-                quote.addOfferOrderQty(gtaUtil.round(fieldVal.Volume));
-                quote.addOfferNumOrders(gtaUtil.mathToIntExact(fieldVal.TotalOrderNo));
+                stockData.addOfferPrice(gtaUtil.round(fieldVal.Price));
+                stockData.addOfferQty(gtaUtil.round(fieldVal.Volume));
+                stockData.addOfferNumOrders(gtaUtil.mathToIntExact(fieldVal.TotalOrderNo));
             }
         });
     }
 
-    // TDF_MARKET_DATA -> Quote
+    // TDF_MARKET_DATA -> StockData
     @Mapping(source = "windCode", target = "market", qualifiedBy = IdentifyMarket.class)
     @Mapping(source = "code", target = "code")
     @Mapping(source = "time", target = "timestamp")
@@ -149,7 +149,7 @@ public interface DatastreamMapper {
     @Mapping(source = "syl1", target = "peRatio1")
     @Mapping(source = "syl2", target = "peRatio2")
     @Mapping(source = "yieldToMaturity", target = "yieldToMaturity")
-    Quote map(TDF_MARKET_DATA data);
+    StockData map(TDF_MARKET_DATA data);
 
     // TDF_ORDER -> Order
     @Mapping(source = "code", target = "code")
