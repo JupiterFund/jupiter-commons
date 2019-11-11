@@ -10,6 +10,7 @@ import com.nodeunify.jupiter.commons.mapper.util.GTAUtil.ExtractTimestamp;
 import com.nodeunify.jupiter.commons.mapper.util.GTAUtil.IdentifyMarket;
 import com.nodeunify.jupiter.commons.mapper.util.GTAUtil.Round;
 import com.nodeunify.jupiter.commons.mapper.util.GTAUtil.RoundToInt;
+import com.nodeunify.jupiter.datastream.v1.FutureData;
 import com.nodeunify.jupiter.datastream.v1.Order;
 import com.nodeunify.jupiter.datastream.v1.StockData;
 
@@ -22,6 +23,7 @@ import org.mapstruct.factory.Mappers;
 
 import cn.com.wind.td.tdf.TDF_MARKET_DATA;
 import cn.com.wind.td.tdf.TDF_ORDER;
+import ctp.thostmduserapi.CThostFtdcDepthMarketDataField;
 
 // @formatter:off
 @Mapper(uses = { GTAUtil.class },
@@ -150,6 +152,52 @@ public interface DatastreamMapper {
     @Mapping(source = "syl2", target = "peRatio2")
     @Mapping(source = "yieldToMaturity", target = "yieldToMaturity")
     StockData map(TDF_MARKET_DATA data);
+
+    // CThostFtdcDepthMarketDataField -> FutureData
+    // TODO: Mappings for UpdateTime and UpdateMillisec
+    @Mapping(source = "preClosePrice", target = "preClosePx", qualifiedBy = Round.class)
+    @Mapping(source = "openPrice", target = "openPx", qualifiedBy = Round.class)
+    @Mapping(source = "closePrice", target = "closePx", qualifiedBy = Round.class)
+    @Mapping(source = "highestPrice", target = "highPx", qualifiedBy = Round.class)
+    @Mapping(source = "lowestPrice", target = "lowPx", qualifiedBy = Round.class)
+    @Mapping(source = "lastPrice", target = "lastPx", qualifiedBy = Round.class)
+    @Mapping(source = "volume", target = "totalVolumeTrade", qualifiedBy = Round.class)
+    @Mapping(source = "turnover", target = "totalValueTrade", qualifiedBy = Round.class)
+    @Mapping(source = "preOpenInterest", target = "preOpenInterest", qualifiedBy = Round.class)
+    @Mapping(source = "openInterest", target = "openInterest", qualifiedBy = Round.class)
+    @Mapping(source = "preSettlementPrice", target = "preSettlePrice", qualifiedBy = Round.class)
+    @Mapping(source = "settlementPrice", target = "settlePrice", qualifiedBy = Round.class)
+    @Mapping(source = "upperLimitPrice", target = "priceUpLimit", qualifiedBy = Round.class)
+    @Mapping(source = "lowerLimitPrice", target = "priceDownLimit", qualifiedBy = Round.class)
+    @Mapping(source = "preDelta", target = "preDelta", qualifiedBy = RoundToInt.class)
+    @Mapping(source = "currDelta", target = "currDelta", qualifiedBy = RoundToInt.class)
+    FutureData map(CThostFtdcDepthMarketDataField data);
+
+    @AfterMapping
+    default void afterMapping(CThostFtdcDepthMarketDataField data, @MappingTarget FutureData.Builder futureData) {
+        GTAUtil gtaUtil = new GTAUtil();
+        futureData
+            .addBidPrice(gtaUtil.round(data.getBidPrice1()))
+            .addBidPrice(gtaUtil.round(data.getBidPrice2()))
+            .addBidPrice(gtaUtil.round(data.getBidPrice3()))
+            .addBidPrice(gtaUtil.round(data.getBidPrice4()))
+            .addBidPrice(gtaUtil.round(data.getBidPrice5()))
+            .addBidQty(gtaUtil.round(data.getBidVolume1()))
+            .addBidQty(gtaUtil.round(data.getBidVolume2()))
+            .addBidQty(gtaUtil.round(data.getBidVolume3()))
+            .addBidQty(gtaUtil.round(data.getBidVolume4()))
+            .addBidQty(gtaUtil.round(data.getBidVolume5()))
+            .addOfferPrice(gtaUtil.round(data.getAskPrice1()))
+            .addOfferPrice(gtaUtil.round(data.getAskPrice2()))
+            .addOfferPrice(gtaUtil.round(data.getAskPrice3()))
+            .addOfferPrice(gtaUtil.round(data.getAskPrice4()))
+            .addOfferPrice(gtaUtil.round(data.getAskPrice5()))
+            .addOfferQty(gtaUtil.round(data.getAskVolume1()))
+            .addOfferQty(gtaUtil.round(data.getAskVolume2()))
+            .addOfferQty(gtaUtil.round(data.getAskVolume3()))
+            .addOfferQty(gtaUtil.round(data.getAskVolume4()))
+            .addOfferQty(gtaUtil.round(data.getAskVolume5()));
+    }
 
     // TDF_ORDER -> Order
     @Mapping(source = "code", target = "code")

@@ -4,17 +4,20 @@ import org.junit.Before;
 import org.junit.Test;
 
 import cn.com.wind.td.tdf.TDF_MARKET_DATA;
+// import ctp.thostmduserapi.CThostFtdcDepthMarketDataField;
 
 import static org.junit.Assert.*;
 
 import com.gta.qts.c2j.adaptee.structure.BuySellLevelInfo3;
 import com.gta.qts.c2j.adaptee.structure.SSEL2_Quotation;
+// import com.nodeunify.jupiter.datastream.v1.FutureData;
 import com.nodeunify.jupiter.datastream.v1.StockData;
 import com.nodeunify.jupiter.datastream.v1.MarketEnum.Market;
 
 public class DatastreamMapperTest {
     private static SSEL2_Quotation quotation;
     private static TDF_MARKET_DATA marketData;
+    // private static CtpMarketData ctpMarketData;
 
     @Before
     public void before() {
@@ -39,6 +42,10 @@ public class DatastreamMapperTest {
         marketData.setWindCode("100200.sz");
         marketData.setCode("100200");
         marketData.setOpen(12330);
+
+        // ctpMarketData = new CtpMarketData();
+        // ctpMarketData.setPreClosePrice(10.23);
+        // ctpMarketData.setOpenPrice(10.11);
     }
 
     @Test
@@ -64,4 +71,17 @@ public class DatastreamMapperTest {
         assertEquals(1, stockData.getMarketValue());
         assertEquals(12330, stockData.getOpenPx());
     }
+
+    // Unit test: unsuccessful
+    // Error: java.lang.UnsatisfiedLinkError: ctp.thostmduserapi.thostmduserapiJNI.swig_module_init()V
+    // Reason: dll or so files must be added into library path
+    // @Test
+    // public void testCThostFtdcDepthMarketDataFieldToFutureData() {
+    //     FutureData futureData = DatastreamMapper.MAPPER.map(ctpMarketData);
+    //     assertEquals(10230, futureData.getPreClosePx());
+    //     assertEquals(10110, futureData.getOpenPx());
+    // }
+
+    // class CtpMarketData extends CThostFtdcDepthMarketDataField {
+    // }
 }
