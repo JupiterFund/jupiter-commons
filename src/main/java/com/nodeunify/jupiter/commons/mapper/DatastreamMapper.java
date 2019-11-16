@@ -155,6 +155,7 @@ public interface DatastreamMapper {
 
     // CThostFtdcDepthMarketDataField -> FutureData
     // TODO: Mappings for UpdateTime and UpdateMillisec
+    @Mapping(source = "instrumentID", target = "code")
     @Mapping(source = "preClosePrice", target = "preClosePx", qualifiedBy = Round.class)
     @Mapping(source = "openPrice", target = "openPx", qualifiedBy = Round.class)
     @Mapping(source = "closePrice", target = "closePx", qualifiedBy = Round.class)
