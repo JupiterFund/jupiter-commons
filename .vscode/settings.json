@@ -1,3 +1,0 @@
-{
-   "java.jdt.ls.vmargs": "-noverify -Xmx1G -XX:+UseG1GC -XX:+UseStringDeduplication -javaagent:\"/tmp/vscode-extensions/GabrielBB.vscode-lombok@0.9.9/extension//server/lombok.jar\"",
-}

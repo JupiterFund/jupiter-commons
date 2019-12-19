@@ -5,6 +5,9 @@ bin
 # Ignore Gradle build output directory
 build
 
+# Ignore VS Code settings
+.vscode
+
 # Ignore Eclipse settings
 .settings
 
