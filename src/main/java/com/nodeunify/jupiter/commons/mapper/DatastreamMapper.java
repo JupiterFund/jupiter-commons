@@ -4,12 +4,14 @@ import java.util.Arrays;
 
 import com.gta.qts.c2j.adaptee.structure.SSEL2_Quotation;
 import com.gta.qts.c2j.adaptee.structure.SZSEL2_Quotation;
-import com.nodeunify.jupiter.commons.mapper.util.GTAUtil;
-import com.nodeunify.jupiter.commons.mapper.util.GTAUtil.ByteArrayToStringAndTrim;
-import com.nodeunify.jupiter.commons.mapper.util.GTAUtil.ExtractTimestamp;
-import com.nodeunify.jupiter.commons.mapper.util.GTAUtil.IdentifyMarket;
-import com.nodeunify.jupiter.commons.mapper.util.GTAUtil.Round;
-import com.nodeunify.jupiter.commons.mapper.util.GTAUtil.RoundToInt;
+import com.nodeunify.jupiter.commons.mapper.qualifier.BaseQualifier;
+import com.nodeunify.jupiter.commons.mapper.qualifier.NumQualifier;
+import com.nodeunify.jupiter.commons.mapper.qualifier.StringQualifier;
+import com.nodeunify.jupiter.commons.mapper.qualifier.BaseQualifier.IdentifyMarketByWindCode;
+import com.nodeunify.jupiter.commons.mapper.qualifier.NumQualifier.Round;
+import com.nodeunify.jupiter.commons.mapper.qualifier.NumQualifier.RoundToInt;
+import com.nodeunify.jupiter.commons.mapper.qualifier.StringQualifier.ByteArrayToStringAndTrim;
+import com.nodeunify.jupiter.commons.mapper.qualifier.StringQualifier.ParseInt;
 import com.nodeunify.jupiter.datastream.v1.FutureData;
 import com.nodeunify.jupiter.datastream.v1.Order;
 import com.nodeunify.jupiter.datastream.v1.StockData;
@@ -26,7 +28,7 @@ import cn.com.wind.td.tdf.TDF_ORDER;
 import ctp.thostmduserapi.CThostFtdcDepthMarketDataField;
 
 // @formatter:off
-@Mapper(uses = { GTAUtil.class },
+@Mapper(uses = { BaseQualifier.class, StringQualifier.class, NumQualifier.class },
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
         typeConversionPolicy = ReportingPolicy.WARN)
 // @formatter:on
@@ -34,10 +36,11 @@ public interface DatastreamMapper {
 
     DatastreamMapper MAPPER = Mappers.getMapper(DatastreamMapper.class);
 
+    // TODO: 根据国泰安返回的时间戳进行调整
     // SSEL2_Quotation -> StockData
     @Mapping(target = "market", expression = "java( com.nodeunify.jupiter.datastream.v1.MarketEnum.Market.SHANGHAI )")
     @Mapping(source = "Symbol", target = "code", qualifiedBy = ByteArrayToStringAndTrim.class)
-    @Mapping(source = "Time", target = "timestamp", qualifiedBy = ExtractTimestamp.class)
+    @Mapping(target = "time", expression = "java(com.nodeunify.jupiter.commons.util.TimeUtil.extractTime(data.Time))")
     @Mapping(source = "PreClosePrice", target = "preClosePx", qualifiedBy = Round.class)
     @Mapping(source = "OpenPrice", target = "openPx", qualifiedBy = Round.class)
     @Mapping(source = "ClosePrice", target = "closePx", qualifiedBy = Round.class)
@@ -69,17 +72,17 @@ public interface DatastreamMapper {
 
     @AfterMapping
     default void afterMapping(SSEL2_Quotation data, @MappingTarget StockData.Builder stockData) {
-        GTAUtil gtaUtil = new GTAUtil();
+        NumQualifier qualifier = new NumQualifier();
         Arrays.stream(data.BuyLevel).forEach((fieldVal) -> {
             if (fieldVal != null) {
-                stockData.addBidPrice(gtaUtil.round(fieldVal.Price));
+                stockData.addBidPrice(qualifier.round(fieldVal.Price));
                 stockData.addBidQty(fieldVal.Volume);
                 stockData.addBidNumOrders(fieldVal.TotalOrderNo);
             }
         });
         Arrays.stream(data.SellLevel).forEach((fieldVal) -> {
             if (fieldVal != null) {
-                stockData.addOfferPrice(gtaUtil.round(fieldVal.Price));
+                stockData.addOfferPrice(qualifier.round(fieldVal.Price));
                 stockData.addOfferQty(fieldVal.Volume);
                 stockData.addOfferNumOrders(fieldVal.TotalOrderNo);
             }
@@ -89,7 +92,7 @@ public interface DatastreamMapper {
     // SZSEL2_Quotation -> StockData
     @Mapping(target = "market", expression = "java( com.nodeunify.jupiter.datastream.v1.MarketEnum.Market.SHENZHEN )")
     @Mapping(source = "Symbol", target = "code", qualifiedBy = ByteArrayToStringAndTrim.class)
-    @Mapping(source = "Time", target = "timestamp", qualifiedBy = ExtractTimestamp.class)
+    @Mapping(target = "time", expression = "java(com.nodeunify.jupiter.commons.util.TimeUtil.extractTime(data.Time))")
     @Mapping(source = "PreClosePrice", target = "preClosePx", qualifiedBy = Round.class)
     @Mapping(source = "OpenPrice", target = "openPx", qualifiedBy = Round.class)
     @Mapping(source = "ClosePrice", target = "closePx", qualifiedBy = Round.class)
@@ -112,27 +115,29 @@ public interface DatastreamMapper {
 
     @AfterMapping
     default void afterMapping(SZSEL2_Quotation data, @MappingTarget StockData.Builder stockData) {
-        GTAUtil gtaUtil = new GTAUtil();
+        NumQualifier qualifier = new NumQualifier();
         Arrays.stream(data.BuyLevel).forEach((fieldVal) -> {
             if (fieldVal != null) {
-                stockData.addBidPrice(gtaUtil.round(fieldVal.Price));
-                stockData.addBidQty(gtaUtil.round(fieldVal.Volume));
-                stockData.addBidNumOrders(gtaUtil.mathToIntExact(fieldVal.TotalOrderNo));
+                stockData.addBidPrice(qualifier.round(fieldVal.Price));
+                stockData.addBidQty(qualifier.round(fieldVal.Volume));
+                stockData.addBidNumOrders(qualifier.longToInt(fieldVal.TotalOrderNo));
             }
         });
         Arrays.stream(data.SellLevel).forEach((fieldVal) -> {
             if (fieldVal != null) {
-                stockData.addOfferPrice(gtaUtil.round(fieldVal.Price));
-                stockData.addOfferQty(gtaUtil.round(fieldVal.Volume));
-                stockData.addOfferNumOrders(gtaUtil.mathToIntExact(fieldVal.TotalOrderNo));
+                stockData.addOfferPrice(qualifier.round(fieldVal.Price));
+                stockData.addOfferQty(qualifier.round(fieldVal.Volume));
+                stockData.addOfferNumOrders(qualifier.longToInt(fieldVal.TotalOrderNo));
             }
         });
     }
 
     // TDF_MARKET_DATA -> StockData
-    @Mapping(source = "windCode", target = "market", qualifiedBy = IdentifyMarket.class)
+    @Mapping(source = "windCode", target = "market", qualifiedBy = IdentifyMarketByWindCode.class)
     @Mapping(source = "code", target = "code")
-    @Mapping(source = "time", target = "timestamp")
+    @Mapping(source = "actionDay", target = "date")
+    @Mapping(source = "time", target = "time")
+    @Mapping(source = "tradingDay", target = "tradeDate")
     @Mapping(source = "preClose", target = "preClosePx")
     @Mapping(source = "open", target = "openPx")
     @Mapping(source = "high", target = "highPx")
@@ -154,8 +159,10 @@ public interface DatastreamMapper {
     StockData map(TDF_MARKET_DATA data);
 
     // CThostFtdcDepthMarketDataField -> FutureData
-    // TODO: Mappings for UpdateTime and UpdateMillisec
     @Mapping(source = "instrumentID", target = "code")
+    @Mapping(source = "actionDay", target = "date", qualifiedBy = ParseInt.class)
+    @Mapping(target = "time", expression = "java(com.nodeunify.jupiter.commons.util.TimeUtil.buildTime(data.getUpdateTime(), data.getUpdateMillisec()))")
+    @Mapping(source = "tradingDay", target = "tradeDate", qualifiedBy = ParseInt.class)
     @Mapping(source = "preClosePrice", target = "preClosePx", qualifiedBy = Round.class)
     @Mapping(source = "openPrice", target = "openPx", qualifiedBy = Round.class)
     @Mapping(source = "closePrice", target = "closePx", qualifiedBy = Round.class)
@@ -176,28 +183,28 @@ public interface DatastreamMapper {
 
     @AfterMapping
     default void afterMapping(CThostFtdcDepthMarketDataField data, @MappingTarget FutureData.Builder futureData) {
-        GTAUtil gtaUtil = new GTAUtil();
+        NumQualifier qualifier = new NumQualifier();
         futureData
-            .addBidPrice(gtaUtil.round(data.getBidPrice1()))
-            .addBidPrice(gtaUtil.round(data.getBidPrice2()))
-            .addBidPrice(gtaUtil.round(data.getBidPrice3()))
-            .addBidPrice(gtaUtil.round(data.getBidPrice4()))
-            .addBidPrice(gtaUtil.round(data.getBidPrice5()))
-            .addBidQty(gtaUtil.round(data.getBidVolume1()))
-            .addBidQty(gtaUtil.round(data.getBidVolume2()))
-            .addBidQty(gtaUtil.round(data.getBidVolume3()))
-            .addBidQty(gtaUtil.round(data.getBidVolume4()))
-            .addBidQty(gtaUtil.round(data.getBidVolume5()))
-            .addOfferPrice(gtaUtil.round(data.getAskPrice1()))
-            .addOfferPrice(gtaUtil.round(data.getAskPrice2()))
-            .addOfferPrice(gtaUtil.round(data.getAskPrice3()))
-            .addOfferPrice(gtaUtil.round(data.getAskPrice4()))
-            .addOfferPrice(gtaUtil.round(data.getAskPrice5()))
-            .addOfferQty(gtaUtil.round(data.getAskVolume1()))
-            .addOfferQty(gtaUtil.round(data.getAskVolume2()))
-            .addOfferQty(gtaUtil.round(data.getAskVolume3()))
-            .addOfferQty(gtaUtil.round(data.getAskVolume4()))
-            .addOfferQty(gtaUtil.round(data.getAskVolume5()));
+            .addBidPrice(qualifier.round(data.getBidPrice1()))
+            .addBidPrice(qualifier.round(data.getBidPrice2()))
+            .addBidPrice(qualifier.round(data.getBidPrice3()))
+            .addBidPrice(qualifier.round(data.getBidPrice4()))
+            .addBidPrice(qualifier.round(data.getBidPrice5()))
+            .addBidQty(qualifier.round(data.getBidVolume1()))
+            .addBidQty(qualifier.round(data.getBidVolume2()))
+            .addBidQty(qualifier.round(data.getBidVolume3()))
+            .addBidQty(qualifier.round(data.getBidVolume4()))
+            .addBidQty(qualifier.round(data.getBidVolume5()))
+            .addOfferPrice(qualifier.round(data.getAskPrice1()))
+            .addOfferPrice(qualifier.round(data.getAskPrice2()))
+            .addOfferPrice(qualifier.round(data.getAskPrice3()))
+            .addOfferPrice(qualifier.round(data.getAskPrice4()))
+            .addOfferPrice(qualifier.round(data.getAskPrice5()))
+            .addOfferQty(qualifier.round(data.getAskVolume1()))
+            .addOfferQty(qualifier.round(data.getAskVolume2()))
+            .addOfferQty(qualifier.round(data.getAskVolume3()))
+            .addOfferQty(qualifier.round(data.getAskVolume4()))
+            .addOfferQty(qualifier.round(data.getAskVolume5()));
     }
 
     // TDF_ORDER -> Order
