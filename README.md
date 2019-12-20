@@ -1,5 +1,6 @@
 # Jupiter-Commons
 
+[![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/JupiterFund/jupiter-commons) 
 [![](https://jitpack.io/v/JupiterFund/jupiter-commons.svg)](https://jitpack.io/#JupiterFund/jupiter-commons)
 [![](https://jitci.com/gh/JupiterFund/jupiter-commons/svg)](https://jitci.com/gh/JupiterFund/jupiter-commons)
 
@@ -23,3 +24,6 @@ dependencies {
     <version>master-SNAPSHOT</version>
 </dependency>
 ```
+
+### License
+The BSD 2-Clause License (see the [LICENSE](https://github.com/JupiterFund/jupiter-commons/blob/master/LICENSE) file for the full text)

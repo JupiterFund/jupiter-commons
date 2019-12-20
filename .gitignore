@@ -8,6 +8,9 @@ build
 # Ignore VS Code settings
 .vscode
 
+# Ignore Theia settings
+.theia
+
 # Ignore Eclipse settings
 .settings
 
