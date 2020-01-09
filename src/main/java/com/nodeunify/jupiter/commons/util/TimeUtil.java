@@ -8,7 +8,7 @@ public final class TimeUtil {
     private static final DateTimeFormatter formater = DateTimeFormatter.ofPattern("HHmmssSSS");
 
     public static int buildTime(String time, int millisec) {
-        LocalTime parsed = LocalTime.parse(time + "." + millisec, parser);
+        LocalTime parsed = LocalTime.parse(time + "." + String.format("%03d", millisec), parser);
         String formatted = parsed.format(formater);
         int localTime = Integer.valueOf(formatted);
         return localTime;
