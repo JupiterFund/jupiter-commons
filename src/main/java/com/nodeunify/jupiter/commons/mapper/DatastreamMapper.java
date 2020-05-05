@@ -36,7 +36,7 @@ public interface DatastreamMapper {
 
     DatastreamMapper MAPPER = Mappers.getMapper(DatastreamMapper.class);
 
-    // TODO: 根据国泰安返回的时间戳进行调整
+    // TODO: check the returned timestamp from GTA
     // SSEL2_Quotation -> StockData
     @Mapping(target = "market", expression = "java( com.nodeunify.jupiter.datastream.v1.MarketEnum.Market.SHANGHAI )")
     @Mapping(source = "Symbol", target = "code", qualifiedBy = ByteArrayToStringAndTrim.class)

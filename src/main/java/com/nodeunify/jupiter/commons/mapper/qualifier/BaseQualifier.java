@@ -31,5 +31,5 @@ public class BaseQualifier {
         }
         return Market.SHANGHAI;
     }
-
+    
 }
