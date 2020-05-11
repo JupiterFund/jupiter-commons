@@ -48,6 +48,7 @@ import ctp.thosttraderapi.CThostFtdcInstrumentField;
 import ctp.thosttraderapi.CThostFtdcInvestorPositionField;
 import ctp.thosttraderapi.CThostFtdcOrderActionField;
 import ctp.thosttraderapi.CThostFtdcOrderField;
+import ctp.thosttraderapi.CThostFtdcQryInstrumentField;
 import ctp.thosttraderapi.CThostFtdcRspInfoField;
 import ctp.thosttraderapi.CThostFtdcTradeField;
 import ctp.thosttraderapi.CThostFtdcTradingAccountField;
@@ -157,6 +158,9 @@ public interface TraderCTPMapper {
     @Mapping(source = "positionType", target = "positionType", ignore = true)
     @Mapping(source = "positionDateType", target = "positionDateType", ignore = true)
     Instrument map(CThostFtdcInstrumentField data);
+
+    // Instument -> CThostFtdcQryInstrumentField
+    CThostFtdcQryInstrumentField map(Instrument data);
 
     // CThostFtdcInvestorPositionField -> InvestorPosition
     @Mapping(source = "posiDirection", target = "posiDirection", qualifiedBy = IdentifyPosiDirection.class)
