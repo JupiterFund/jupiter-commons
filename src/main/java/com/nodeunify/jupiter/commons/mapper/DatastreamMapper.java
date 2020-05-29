@@ -25,7 +25,6 @@ import org.mapstruct.factory.Mappers;
 
 import cn.com.wind.td.tdf.TDF_MARKET_DATA;
 import cn.com.wind.td.tdf.TDF_ORDER;
-import ctp.thostmduserapi.CThostFtdcDepthMarketDataField;
 
 // @formatter:off
 @Mapper(uses = { BaseQualifier.class, StringQualifier.class, NumQualifier.class },
@@ -158,7 +157,7 @@ public interface DatastreamMapper {
     @Mapping(source = "yieldToMaturity", target = "yieldToMaturity")
     StockData map(TDF_MARKET_DATA data);
 
-    // CThostFtdcDepthMarketDataField -> FutureData
+    // ctp.thostmduserapi.CThostFtdcDepthMarketDataField -> FutureData
     @Mapping(source = "instrumentID", target = "code")
     @Mapping(source = "actionDay", target = "date", qualifiedBy = ParseInt.class)
     @Mapping(target = "time", expression = "java(com.nodeunify.jupiter.commons.util.TimeUtil.buildTime(data.getUpdateTime(), data.getUpdateMillisec()))")
@@ -179,10 +178,59 @@ public interface DatastreamMapper {
     @Mapping(source = "lowerLimitPrice", target = "priceDownLimit", qualifiedBy = Round.class)
     @Mapping(source = "preDelta", target = "preDelta", qualifiedBy = RoundToInt.class)
     @Mapping(source = "currDelta", target = "currDelta", qualifiedBy = RoundToInt.class)
-    FutureData map(CThostFtdcDepthMarketDataField data);
+    FutureData map(ctp.thostmduserapi.CThostFtdcDepthMarketDataField data);
 
     @AfterMapping
-    default void afterMapping(CThostFtdcDepthMarketDataField data, @MappingTarget FutureData.Builder futureData) {
+    default void afterMapping(ctp.thostmduserapi.CThostFtdcDepthMarketDataField data, @MappingTarget FutureData.Builder futureData) {
+        NumQualifier qualifier = new NumQualifier();
+        futureData
+            .addBidPrice(qualifier.round(data.getBidPrice1()))
+            .addBidPrice(qualifier.round(data.getBidPrice2()))
+            .addBidPrice(qualifier.round(data.getBidPrice3()))
+            .addBidPrice(qualifier.round(data.getBidPrice4()))
+            .addBidPrice(qualifier.round(data.getBidPrice5()))
+            .addBidQty(qualifier.round(data.getBidVolume1()))
+            .addBidQty(qualifier.round(data.getBidVolume2()))
+            .addBidQty(qualifier.round(data.getBidVolume3()))
+            .addBidQty(qualifier.round(data.getBidVolume4()))
+            .addBidQty(qualifier.round(data.getBidVolume5()))
+            .addOfferPrice(qualifier.round(data.getAskPrice1()))
+            .addOfferPrice(qualifier.round(data.getAskPrice2()))
+            .addOfferPrice(qualifier.round(data.getAskPrice3()))
+            .addOfferPrice(qualifier.round(data.getAskPrice4()))
+            .addOfferPrice(qualifier.round(data.getAskPrice5()))
+            .addOfferQty(qualifier.round(data.getAskVolume1()))
+            .addOfferQty(qualifier.round(data.getAskVolume2()))
+            .addOfferQty(qualifier.round(data.getAskVolume3()))
+            .addOfferQty(qualifier.round(data.getAskVolume4()))
+            .addOfferQty(qualifier.round(data.getAskVolume5()));
+    }
+
+    // ctp.thosttraderapi.CThostFtdcDepthMarketDataField -> FutureData
+    @Mapping(source = "instrumentID", target = "code")
+    @Mapping(source = "actionDay", target = "date", qualifiedBy = ParseInt.class)
+    @Mapping(target = "time", expression = "java(com.nodeunify.jupiter.commons.util.TimeUtil.buildTime(data.getUpdateTime(), data.getUpdateMillisec()))")
+    @Mapping(source = "tradingDay", target = "tradeDate", qualifiedBy = ParseInt.class)
+    @Mapping(source = "preClosePrice", target = "preClosePx", qualifiedBy = Round.class)
+    @Mapping(source = "openPrice", target = "openPx", qualifiedBy = Round.class)
+    @Mapping(source = "closePrice", target = "closePx", qualifiedBy = Round.class)
+    @Mapping(source = "highestPrice", target = "highPx", qualifiedBy = Round.class)
+    @Mapping(source = "lowestPrice", target = "lowPx", qualifiedBy = Round.class)
+    @Mapping(source = "lastPrice", target = "lastPx", qualifiedBy = Round.class)
+    @Mapping(source = "volume", target = "totalVolumeTrade", qualifiedBy = Round.class)
+    @Mapping(source = "turnover", target = "totalValueTrade", qualifiedBy = Round.class)
+    @Mapping(source = "preOpenInterest", target = "preOpenInterest", qualifiedBy = Round.class)
+    @Mapping(source = "openInterest", target = "openInterest", qualifiedBy = Round.class)
+    @Mapping(source = "preSettlementPrice", target = "preSettlePrice", qualifiedBy = Round.class)
+    @Mapping(source = "settlementPrice", target = "settlePrice", qualifiedBy = Round.class)
+    @Mapping(source = "upperLimitPrice", target = "priceUpLimit", qualifiedBy = Round.class)
+    @Mapping(source = "lowerLimitPrice", target = "priceDownLimit", qualifiedBy = Round.class)
+    @Mapping(source = "preDelta", target = "preDelta", qualifiedBy = RoundToInt.class)
+    @Mapping(source = "currDelta", target = "currDelta", qualifiedBy = RoundToInt.class)
+    FutureData map(ctp.thosttraderapi.CThostFtdcDepthMarketDataField data);
+
+    @AfterMapping
+    default void afterMapping(ctp.thosttraderapi.CThostFtdcDepthMarketDataField data, @MappingTarget FutureData.Builder futureData) {
         NumQualifier qualifier = new NumQualifier();
         futureData
             .addBidPrice(qualifier.round(data.getBidPrice1()))

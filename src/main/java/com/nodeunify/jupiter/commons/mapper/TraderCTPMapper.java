@@ -29,8 +29,14 @@ import com.nodeunify.jupiter.commons.mapper.qualifier.ctp.EnumQualifier.Identify
 import com.nodeunify.jupiter.trader.ctp.v1.Error;
 import com.nodeunify.jupiter.trader.ctp.v1.Instrument;
 import com.nodeunify.jupiter.trader.ctp.v1.InvestorPosition;
+import com.nodeunify.jupiter.trader.ctp.v1.InvestorPositionDetail;
 import com.nodeunify.jupiter.trader.ctp.v1.Order;
 import com.nodeunify.jupiter.trader.ctp.v1.OrderAction;
+import com.nodeunify.jupiter.trader.ctp.v1.QueryDepthMarketDataField;
+import com.nodeunify.jupiter.trader.ctp.v1.QueryInstrumentField;
+import com.nodeunify.jupiter.trader.ctp.v1.QueryInvestorPositionDetailField;
+import com.nodeunify.jupiter.trader.ctp.v1.QueryInvestorPositionField;
+import com.nodeunify.jupiter.trader.ctp.v1.QueryTradingAccountField;
 import com.nodeunify.jupiter.trader.ctp.v1.ResponseInfo;
 import com.nodeunify.jupiter.trader.ctp.v1.Trade;
 import com.nodeunify.jupiter.trader.ctp.v1.TradingAccount;
@@ -45,10 +51,15 @@ import org.mapstruct.factory.Mappers;
 import ctp.thosttraderapi.CThostFtdcInputOrderActionField;
 import ctp.thosttraderapi.CThostFtdcInputOrderField;
 import ctp.thosttraderapi.CThostFtdcInstrumentField;
+import ctp.thosttraderapi.CThostFtdcInvestorPositionDetailField;
 import ctp.thosttraderapi.CThostFtdcInvestorPositionField;
 import ctp.thosttraderapi.CThostFtdcOrderActionField;
 import ctp.thosttraderapi.CThostFtdcOrderField;
+import ctp.thosttraderapi.CThostFtdcQryDepthMarketDataField;
 import ctp.thosttraderapi.CThostFtdcQryInstrumentField;
+import ctp.thosttraderapi.CThostFtdcQryInvestorPositionDetailField;
+import ctp.thosttraderapi.CThostFtdcQryInvestorPositionField;
+import ctp.thosttraderapi.CThostFtdcQryTradingAccountField;
 import ctp.thosttraderapi.CThostFtdcRspInfoField;
 import ctp.thosttraderapi.CThostFtdcTradeField;
 import ctp.thosttraderapi.CThostFtdcTradingAccountField;
@@ -168,6 +179,12 @@ public interface TraderCTPMapper {
     @Mapping(source = "positionDate", target = "positionDate", qualifiedBy = IdentifyPositionDate.class)
     InvestorPosition map(CThostFtdcInvestorPositionField data);
 
+    // CThostFtdcInvestorPositionDetailField -> InvestorPositionDetail
+    @Mapping(source = "direction", target = "direction", qualifiedBy = IdentifyDirection.class)
+    @Mapping(source = "hedgeFlag", target = "hedgeFlag", qualifiedBy = IdentifyHedgeFlag.class)
+    @Mapping(source = "tradeType", target = "tradeType", ignore = true)
+    InvestorPositionDetail map(CThostFtdcInvestorPositionDetailField data);
+
     // CThostFtdcTradingAccountField -> TradingAccount
     TradingAccount map(CThostFtdcTradingAccountField data);
 
@@ -185,4 +202,19 @@ public interface TraderCTPMapper {
     // CThostFtdcOrderActionField, CThostFtdcRspInfoField -> Error
     @Mapping(source = "source", target = "source", qualifiedBy = IdentifyErrorSource.class)
     Error map(CThostFtdcOrderActionField order, CThostFtdcRspInfoField rspInfo, String source);
+
+    // QueryInstrumentField -> CThostFtdcQryInstrumentField
+    CThostFtdcQryInstrumentField map(QueryInstrumentField data);
+
+    // QueryInvestorPositionField -> CThostFtdcQryInvestorPositionField
+    CThostFtdcQryInvestorPositionField map(QueryInvestorPositionField data);
+
+    // QueryTradingAccountField -> CThostFtdcQryTradingAccountField
+    CThostFtdcQryTradingAccountField map(QueryTradingAccountField data);
+
+    // QueryDepthMarketDataField -> CThostFtdcQryDepthMarketDataField
+    CThostFtdcQryDepthMarketDataField map(QueryDepthMarketDataField data);
+
+    // QueryInvestorPositionDetailField -> CThostFtdcQryInvestorPositionDetailField
+    CThostFtdcQryInvestorPositionDetailField map(QueryInvestorPositionDetailField data);
 }

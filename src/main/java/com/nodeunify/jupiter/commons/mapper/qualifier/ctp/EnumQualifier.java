@@ -23,8 +23,8 @@ import com.nodeunify.jupiter.trader.ctp.v1.Order.VolumeCondition;
 import com.nodeunify.jupiter.trader.ctp.v1.OrderAction.ActionFlag;
 import com.nodeunify.jupiter.trader.ctp.v1.OrderAction.OrderActionStatus;
 import com.nodeunify.jupiter.trader.ctp.v1.Trade.PriceSource;
-import com.nodeunify.jupiter.trader.ctp.v1.Trade.TradeType;
 import com.nodeunify.jupiter.trader.ctp.v1.Trade.TradingRole;
+import com.nodeunify.jupiter.trader.ctp.v1.TradeTypeEnum.TradeType;
 
 import org.mapstruct.Qualifier;
 
@@ -573,13 +573,13 @@ public class EnumQualifier {
     @IdentifyPosiDirection
     public PosiDirection identifyPosiDirection(char c) {
         switch (c) {
-            case '0':
+            case '1':
                 return PosiDirection.NET;
 
-            case '1':
+            case '2':
                 return PosiDirection.LONG;
 
-            case '2':
+            case '3':
                 return PosiDirection.SHORT;
         
             default:
