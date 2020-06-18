@@ -14,6 +14,7 @@ import com.nodeunify.jupiter.trader.ctp.v1.Order.OrderPriceType;
 import com.nodeunify.jupiter.trader.ctp.v1.Order.TimeCondition;
 import com.nodeunify.jupiter.trader.ctp.v1.Order.VolumeCondition;
 import com.nodeunify.jupiter.trader.ctp.v1.OrderAction.ActionFlag;
+import com.nodeunify.jupiter.trader.ctp.v1.QueryTradingAccountField.BizType;
 
 import org.mapstruct.Qualifier;
 
@@ -65,6 +66,11 @@ public class CharQualifier {
     @Target(ElementType.METHOD)
     @Retention(RetentionPolicy.SOURCE)
     public @interface IdentifyActionFlagBack { }
+
+    @Qualifier
+    @Target(ElementType.METHOD)
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface IdentifyBizTypeBack { }
 
     // @formatter:on
 
@@ -295,6 +301,17 @@ public class CharQualifier {
         } 
         if (actionFlag == ActionFlag.MODIFY) {
             return (char) '3';
+        }
+        return Character.MIN_VALUE;
+    }
+
+    @IdentifyBizTypeBack
+    public char identifyBizTypeBack(BizType bizType) {
+        if (bizType == BizType.Future) {
+            return (char) '1';
+        } 
+        if (bizType == BizType.Stock) {
+            return (char) '2';
         }
         return Character.MIN_VALUE;
     }

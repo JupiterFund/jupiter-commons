@@ -3,6 +3,7 @@ package com.nodeunify.jupiter.commons.mapper;
 import com.nodeunify.jupiter.commons.mapper.qualifier.ctp.CharQualifier;
 import com.nodeunify.jupiter.commons.mapper.qualifier.ctp.EnumQualifier;
 import com.nodeunify.jupiter.commons.mapper.qualifier.ctp.CharQualifier.IdentifyActionFlagBack;
+import com.nodeunify.jupiter.commons.mapper.qualifier.ctp.CharQualifier.IdentifyBizTypeBack;
 import com.nodeunify.jupiter.commons.mapper.qualifier.ctp.CharQualifier.IdentifyContingentConditionBack;
 import com.nodeunify.jupiter.commons.mapper.qualifier.ctp.CharQualifier.IdentifyDirectionBack;
 import com.nodeunify.jupiter.commons.mapper.qualifier.ctp.CharQualifier.IdentifyForceCloseReasonBack;
@@ -210,6 +211,7 @@ public interface TraderCTPMapper {
     CThostFtdcQryInvestorPositionField map(QueryInvestorPositionField data);
 
     // QueryTradingAccountField -> CThostFtdcQryTradingAccountField
+    @Mapping(source = "bizType", target = "bizType", qualifiedBy = IdentifyBizTypeBack.class)
     CThostFtdcQryTradingAccountField map(QueryTradingAccountField data);
 
     // QueryDepthMarketDataField -> CThostFtdcQryDepthMarketDataField
