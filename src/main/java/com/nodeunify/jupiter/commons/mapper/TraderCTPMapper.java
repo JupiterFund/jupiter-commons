@@ -152,14 +152,18 @@ public interface TraderCTPMapper {
     @AfterMapping
     default void afterMapping(CThostFtdcTradeField data, @MappingTarget Trade.Builder trade) {
         EnumQualifier qualifier = new EnumQualifier();
-        if (data.getPriceSource() != '\u0000') {
-            trade.setPriceSource(qualifier.identifyPriceSource(data.getPriceSource()));
-        }
-        if (data.getTradingRole() != '\u0000') {
-            trade.setTradingRole(qualifier.identifyTradingRole(data.getTradingRole()));
-        }
-        if (data.getTradeType() != '\u0000') {
-            trade.setTradeType(qualifier.identifyTradeType(data.getTradeType()));
+        try {
+            if (data.getPriceSource() != '\u0000' && !Character.isWhitespace(data.getPriceSource())) {
+                trade.setPriceSource(qualifier.identifyPriceSource(data.getPriceSource()));
+            }
+            if (data.getTradingRole() != '\u0000' && !Character.isWhitespace(data.getTradingRole())) {
+                trade.setTradingRole(qualifier.identifyTradingRole(data.getTradingRole()));
+            }
+            if (data.getTradeType() != '\u0000' && !Character.isWhitespace(data.getTradeType())) {
+                trade.setTradeType(qualifier.identifyTradeType(data.getTradeType()));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
