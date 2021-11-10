@@ -39,6 +39,7 @@ public interface DatastreamMapper {
     // SSEL2_Quotation -> StockData
     @Mapping(target = "market", expression = "java( com.nodeunify.jupiter.datastream.v1.MarketEnum.Market.SHANGHAI )")
     @Mapping(source = "Symbol", target = "code", qualifiedBy = ByteArrayToStringAndTrim.class)
+    @Mapping(target = "date", expression = "java(com.nodeunify.jupiter.commons.util.DateUtil.getCurrentDate())")
     @Mapping(target = "time", expression = "java(com.nodeunify.jupiter.commons.util.TimeUtil.extractTime(data.Time))")
     @Mapping(source = "PreClosePrice", target = "preClosePx", qualifiedBy = Round.class)
     @Mapping(source = "OpenPrice", target = "openPx", qualifiedBy = Round.class)
@@ -91,6 +92,7 @@ public interface DatastreamMapper {
     // SZSEL2_Quotation -> StockData
     @Mapping(target = "market", expression = "java( com.nodeunify.jupiter.datastream.v1.MarketEnum.Market.SHENZHEN )")
     @Mapping(source = "Symbol", target = "code", qualifiedBy = ByteArrayToStringAndTrim.class)
+    @Mapping(target = "date", expression = "java(com.nodeunify.jupiter.commons.util.DateUtil.getCurrentDate())")
     @Mapping(target = "time", expression = "java(com.nodeunify.jupiter.commons.util.TimeUtil.extractTime(data.Time))")
     @Mapping(source = "PreClosePrice", target = "preClosePx", qualifiedBy = Round.class)
     @Mapping(source = "OpenPrice", target = "openPx", qualifiedBy = Round.class)
